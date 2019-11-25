@@ -1,0 +1,19 @@
+/* 这是商务模块的SQL编写的地方 */
+
+/* business.customer.list.data */
+SELECT dic.id, dic.name, dic.mobile, dic.reason, dic.create_time, dic.remark
+FROM dc_interest_customer AS dic
+WHERE 1=1 $condition
+ORDER BY dic.create_time desc
+LIMIT @pageNum,10
+
+/* business.customer.list.data.count */
+SELECT count(1) count
+FROM dc_interest_customer AS dic
+WHERE 1=1 $condition
+
+/* business.customer.collection.list.data */
+SELECT dic.id, dic.name, dic.mobile, dic.reason, dic.create_time, dic.remark
+FROM dc_interest_customer AS dic
+WHERE 1=1 $condition
+ORDER BY dic.create_time desc

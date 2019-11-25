@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WebUploader演示</title>
+    <link rel="stylesheet" type="text/css" href="../../css/webuploader.css" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+</head>
+<body>
+<div>
+  <div class="filePicker">选择图片</div>
+    <div class="img">
+        <input type="hidden" class="val" name="image"/>
+      <img src="">
+    </div>
+</div>
+<div>
+    <div class="filePicker">选择图片</div>
+    <div class="img">
+        <input type="hidden" class="val" name="image"/>
+        <img src="">
+    </div>
+</div>
+
+<script type="text/javascript" src="./jquery.js"></script>
+<script type="text/javascript" src="../../dist/webuploader.js"></script>
+<script type="text/javascript">
+var $ = jQuery,
+    $index = 0,//保存触发上传事件按钮的索引，从0开始
+    $image  ,
+    uploader;
+$('.filePicker').on('click',function(){
+ 
+    $index = $(this).index('.filePicker');//获取索引
+    $image = $($('.img').get($index));//获取该组的Dom并转成jquery对象
+    uploader.reset();
+     
+});
+// 文件上传成功，给该组的input、img赋值。
+// 参数response 为后台传回的数据（可自定义我这儿是{"status" : "Success", "msg" : "服务端路径+文件名"})
+uploader.on( 'uploadSuccess', function( file ,response) {
+        $img = $image.find('img');
+        var result = eval('(' + response._raw + ')'); 
+        if(result.status =="Success"){
+             $image.find('.val').val(result.msg);
+                $img.attr( 'src', result.msg);   
+        }
+        else alert(result.msg);
+});
+</script>
+</body>
+</html>

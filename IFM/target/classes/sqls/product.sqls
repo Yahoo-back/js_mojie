@@ -1,0 +1,87 @@
+/* 这是商品模块的SQL编写的地方 */
+
+/* product.list.data */
+SELECT dp.id, dp.name, dpc.name classify, dp.interest, dp.link, dp.description, dp.manager_url, dp.manager_user, dp.manager_password,
+dp.create_time, dp.status, dp.sort, dp.position, dp.is_hot, dp.hot_sort
+FROM dc_product AS dp
+LEFT JOIN dc_product_classify AS dpc ON dpc.id = dp.classify_id
+WHERE 1=1 $condition AND dp.status IN ('0', '1')
+ORDER BY dp.sort asc,dp.hot_sort asc,dp.position desc, dp.status desc, dp.create_time desc
+LIMIT @pageNum,10
+
+/* product.list.data.count */
+SELECT count(1) count
+FROM dc_product AS dp
+LEFT JOIN dc_product_classify AS dpc ON dpc.id = dp.classify_id
+WHERE 1=1 $condition AND dp.status IN ('0', '1')
+
+/* product.collection.list.data */
+SELECT dp.id, dp.name, dpc.name classify, dp.interest, dp.link, dp.description, dp.manager_url, dp.manager_user, dp.manager_password,
+dp.create_time, dp.status, dp.sort, dp.position, dp.is_hot, dp.hot_sort
+FROM dc_product AS dp
+LEFT JOIN dc_product_classify AS dpc ON dpc.id = dp.classify_id
+WHERE 1=1 $condition AND dp.status IN ('0', '1')
+ORDER BY dp.status desc,dp.sort asc , dp.create_time desc
+
+/* product.classify.list.data */
+SELECT dpc.id, dpc.name, dpc.logo, dpc.url, dpc.create_time, dpc.status, dpc.is_home, dpc.sort, dpc.home_sort
+FROM dc_product_classify AS dpc
+WHERE 1=1 $condition AND dpc.status IN ('0', '1')
+ORDER BY dpc.sort asc
+LIMIT @pageNum,10
+
+/* product.classify.list.data.count */
+SELECT count(1) count
+FROM dc_product_classify AS dpc
+WHERE 1=1 $condition AND dpc.status IN ('0', '1')
+
+/* export.product.classify.list.data */
+SELECT dpc.id, dpc.name, dpc.logo, dpc.url, dpc.create_time, dpc.status, dpc.is_home, dpc.sort, dpc.home_sort
+FROM dc_product_classify AS dpc
+WHERE 1=1 $condition AND dpc.status IN ('0', '1')
+ORDER BY dpc.sort asc
+
+/* product.company.on.list.data */
+SELECT DISTINCT company
+FROM dc_product
+WHERE status = '1'
+
+/*product.bank.data*/
+ select DATA_TYPE ,ITEM_KEY,ITEM_VALUE,XH,OUT_DATA_FROM,PARENT_ID,DICT_DESC,is_view
+    from bank_dict where ITEM_VALUE = '$condition'
+
+/* product.visitManage.list */
+select dpvm.id ,dpvm.money ,dp.name,dpvm.count,dpvm.create_time,dpvm.status
+from dc_product_visit_manage dpvm
+left join dc_product dp on dpvm.product_id = dp.id
+WHERE 1=1 $condition
+ORDER BY dpvm.create_time desc
+LIMIT @pageNum,10
+
+/* product.visitCount.data */
+SELECT ifnull(sum(dpvl.count),0)count
+FROM dc_product_visit_log AS dpvl
+WHERE dpvl.product_id = @productId
+AND DAY(dpvl.visit_time)=DAY(NOW())
+
+/* product.visitMoney.data */
+SELECT ifnull(sum(money),0)money
+FROM dc_product_visit_manage
+WHERE product_id = @productId
+AND status = '0'
+
+/* product.moneyCount.data */
+select
+ifnull(sum(dpvl.count),0) count
+from dc_product_visit_log dpvl
+left join dc_product_visit_manage dpvm on dpvm.product_id = dpvl.product_id
+left join (select d.product_id,min(d.create_time)create_time from dc_product_visit_manage d where d.status = '0') a on a.product_id = dpvl.product_id
+where dpvl.product_id = #{productId,jdbcType=INTEGER}
+and dpvm.status = '0'
+and dpvl.visit_time >= a.create_time
+
+/* product.visitManageProduct.list */
+SELECT dp.id, dp.name
+FROM dc_product AS dp
+where dp.status <> "2"
+and dp.id not in (SELECT d.product_id FROM dc_product_visit_manage d where d.status in ("0","1"))

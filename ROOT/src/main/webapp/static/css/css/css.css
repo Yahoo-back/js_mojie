@@ -1,0 +1,64 @@
+@charset "utf-8";
+.W-1200{ width:1200px; margin:0 auto}
+.bodyBg{ background:url(../images/bg.jpg) top center no-repeat #ace2fd;}
+.logo{ width:526px; height:154px; overflow:hidden}
+.logo img{ float:left;}
+.loginBox{ position:fixed; left:50%; top:56%; margin:-196px 0 0 -391px; padding:24px 463px 0 59px; width:260px; height:368px; overflow:hidden; background:url(../images/loginbox.png) no-repeat}
+.loginBox h3{ padding:30px 30px 10px;overflow:hidden; font-size:18px; color:#4a6fb0; line-height:20px; margin:0 12px 20px;}
+.loginBox li{ padding:0 30px; margin-bottom:22px; overflow:hidden}
+.loginBox li input.text{ border:1px solid #ddd; height:32px; line-height:32px; padding-left:6px; width:192px; font-size:14px}
+.loginBox h4{ text-align:center; color:#848484; padding-top:10px}
+.blueBtn{ width:200px; height:34px; line-height:34px; background:#4868a5; text-align:center; color:#fff; font-size:18px; display:inline-block}
+.blueBtn:hover{ text-decoration:none; background:#234074; color:#fff}
+
+.topMenu{ background:#27AE60; height:70px; overflow:hidden;}
+.topMenu .logo{ width:290px; height:70px; float:left}
+.topMenu dl{ border-right:1px solid #27AE60; border-left:1px solid #27AE60; float:left; overflow:hidden; text-align:center}
+.topMenu dl dd{ height:40px; width:40px; line-height:2px;text-align:center;margin:0 auto}
+.topMenu dl dt{ line-height:20px; padding-bottom:10px; overflow:hidden; width:100px;}
+.topMenu dl a{ color:#fff;}
+.topMenu dl a:hover{ text-decoration:none}
+.topMenu dl.current,.topMenu dl:hover{ background:#208d4e}
+.userInfo{ float:right; padding-top:10px; line-height:50px; margin-right:20px}
+.userInfo a{ float:left; color:#6b9eff;}
+.userInfo span{ padding:0 10px; font-size:12px; color:#6b9eff; float:left}
+
+.userInfo1{ float:right; padding-top:10px; /* line-height:50px; */ margin-right:20px}
+.userInfo1 a{ float:left; color:#6b9eff;}
+.userInfo1 span{ padding:0 10px; font-size:12px; color:#6b9eff; float:left}
+
+.subMenu{border-bottom:1px solid #ddd; background:#f5f5f5; overflow:hidden}
+.subMenu ul{ padding-left:80px;}
+.subMenu ul li{ float:left; padding:0 8px; overflow:hidden}
+.subMenu ul li a{height:36px; line-height:36px; padding:4px 8px; background:#f5f5f5; border-radius:2px; text-decoration:none}
+.subMenu ul li.current a,.subMenu ul li a:hover{ background:#27AE60; color:#fff;}
+.main{ padding:10px 0; overflow:hidden;}
+.copyRight{ width:100%; text-align:center; padding:10px 0}
+
+.mapLayer{ position:relative; width:100%; height:100%; overflow:hidden}
+.floatBox{ position: absolute; right:4px; top:4px; border:1px solid #ccc; padding:1px; background:#fff; overflow:hidden}
+.floatBox li{ float:left; padding:4px 20px 4px 4px; height:20px; line-height:20px; background:#c5e3ed; font-size:12px}
+.floatBox li:hover{ background-color:#fff; cursor:pointer}
+/*formnew-one*/
+.form-new{ margin:10px; font-size:14px}
+.form-new h3{ padding:10px 0; font-size:15px; font-weight:bold}
+.form-new h4{ padding:0 0 10px; font-size:12px; font-weight:normal}
+.form-new li{line-height:30px; overflow:hidden; padding:4px 0;}
+.form-new li label{ width:120px; float:left; line-height:30px; text-align:right; padding-right:4px}
+.form-new li input,.form-new li textarea{ border:1px solid #ddd; line-height:28px; padding-left:4px; width:210px; float:left; margin-right:4px;}
+.form-new li.label{ padding-left:124px}
+.form-new li select{ padding:4px 0}
+/*formnew-two*/
+.form-new-two ul{ float:left; width:40%;}
+.form-new-two li{ width:98%}
+.form-new-two li label{ width:30%;}
+.form-new-two li input{ width:62%}
+.form-new-two li textarea{ resize:none;width:62%}
+/*formnew-three*/
+.form-new-three ul{width:30%}
+
+.btn-blue,.btn-grey{ display:inline-block; padding:0 24px; line-height:32px; background:#36c; color:#fff; font-size:14px; margin:0 4px;}
+.btn-grey{ background:#ccc; color:#333}
+.btn-blue:hover{ background:#37b; color:#fff; text-decoration:none}
+.btn-grey:hover{ background:#bbb; color:#333; text-decoration:none}
+.form-new .clearfix{ padding:40px 0 20px; overflow:hidden}

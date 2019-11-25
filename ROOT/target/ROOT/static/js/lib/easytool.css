@@ -1,0 +1,88 @@
+
+
+
+.et-form-view .et-edit{
+	display: none;
+}
+
+.et-form-edit .et-view{
+	display: none;
+	width: 100%;
+}
+.et-form-edit .et-edit{
+	width: 100%;
+}
+
+
+.et-common-query-datagrid-view .datagrid-sort-icon{
+	display: none;
+}
+.et-common-query-datagrid-view .datagrid-sort-icon.et-common-sort-icon{
+	display: inline;
+}
+
+.et-common-query-title{
+	margin-left: -4px;
+	margin-right: -4px;
+ 	padding-bottom: 2px;
+	/*border-bottom-width: 1px;*/
+	/*border-bottom-color: #CCCCCC;*/
+	/*border-bottom-style: dotted;*/
+}
+.et-common-query-condition{
+ 	padding-top: 4px; 
+ 	height: 22px;
+ 	margin-bottom: 0px;
+ 	margin-top: 0px;
+}
+.et-common-query-condition input{
+	height: 15px;
+}
+.et-common-query-condition select{
+	height: 20px;
+}
+
+.et-common-query-condition-empty{
+	background-color: rgba(0, 0, 0, 0);
+    border: 0 none;
+}
+
+
+
+.et-page-actions{
+	margin: 5px;
+}
+
+.et-page-customs-actions{
+	padding-right: 45px;
+	float: right;
+}
+.et-common-query-actions{
+	padding-right: 45px;
+	float: right;
+}
+.et-page-actions-end{
+	clear: both;
+}
+
+.et-common-form{
+	padding-bottom: 5px;
+	padding-top: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

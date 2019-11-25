@@ -1,0 +1,18 @@
+@charset "utf-8";
+.console-header{background:#ffcf12;}
+.console-header .logo{background-color:#ffcf12; background-image:url(images/logo-b.png);border-right:1px solid #f7c500; color:#333;}
+
+
+#header-tab li{border-right:1px solid #f7c500; color:#333;}
+#header-tab li:hover{background:#ffd42c;}
+#header-tab li.active{background:#f7c500;}
+
+#iframe-tab li.active a{}
+
+.left-nav .tip{border:1px solid #22282e; color:#333; border-left:none;}
+
+.console-header .nav li .b,.console-header .nav .n a{color:#333;}
+.console-header .nav li{border-left:1px solid #f7c500;}
+.console-header .nav li .b:hover,
+.console-header .nav .n a:hover,
+.console-header .nav .hover .b{background:#ffd42c;}

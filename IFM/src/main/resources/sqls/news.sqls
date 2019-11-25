@@ -1,0 +1,47 @@
+/* 这里是资讯模块sql编写 */
+
+/* news.list.data */
+SELECT dn.id, dn.title, dn.position, dn.sort, dn.status, dn.start_time, dn.create_time, dn.url
+FROM dc_news AS dn
+WHERE 1=1 AND dn.status IN ('0', '1') $condition
+ORDER BY sort asc, start_time desc
+LIMIT @pageNum,10
+
+/* news.list.data.count */
+SELECT count(1) count
+FROM dc_news AS dn
+WHERE 1=1 AND dn.status IN ('0', '1') $condition
+
+/* export.news.list.data */
+SELECT dn.id, dn.title, dn.position, dn.sort, dn.status, dn.start_time, dn.create_time, dn.url
+FROM dc_news AS dn
+WHERE 1=1 AND dn.status IN ('0', '1') $condition
+ORDER BY sort asc, start_time desc
+
+/* news.click.all.data */
+SELECT sum(IFNULL(count,0)) count
+FROM dc_product_visit_log
+where type = '1' AND product_id = @newId
+
+/* news.click.seven.data */
+SELECT sum(IFNULL(count,0)) count
+FROM dc_product_visit_log
+where type = '1' AND product_id = @newId AND DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= DATE_FORMAT(visit_time,'%Y-%m-%d')
+
+/* news.classify.list.data */
+SELECT dny.id, dny.name, dny.type, dny.status, dny.create_time, dny.sort
+FROM dc_news_type AS dny
+WHERE 1=1 AND dny.status IN ('0', '1') AND type = @type $condition
+ORDER BY dny.sort asc
+LIMIT @pageNum,10
+
+/* news.classify.list.data.count */
+SELECT count(1) count
+FROM dc_news_type AS dny
+WHERE 1=1 AND dny.status IN ('0', '1') AND type = @type $condition
+
+/* export.news.classify.list.data */
+SELECT dny.id, dny.name, dny.type, dny.status, dny.create_time, dny.sort
+FROM dc_news_type AS dny
+WHERE 1=1 AND dny.status IN ('0', '1') AND type = @type $condition
+ORDER BY dny.sort asc

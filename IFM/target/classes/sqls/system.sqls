@@ -1,0 +1,51 @@
+/* 这是系统模块的SQL编写的地方 */
+
+/* sys.meun.select.data */
+select distinct t.*
+FROM
+IFM_SYS_MUEN  t 
+where exists (select 1 from IFM_ROLE_MUEN t1 join IFM_USER_ROLE t2 on t2.role_id = t1.role_id 
+join IFM_SYS_USER t3 on t3.userid = t2.user_id join IFM_SYS_LOGIN t4 on t4.lgnid=t3.lgn_id where t.muenId=t1.muen_id
+and t3.userid = @user_code
+) order by t.xh
+
+/* sys.user.select.data */
+SELECT isu.userId, isu.USER_NAME, isu.ORG_ID, isu.JOB_NUM, isu.SEX, isu.DEGREE, isu.IDENTITY_CARD, isu.PHONE, isu.COMPANY_EMAIL, isu.PERSONAL_EMAIL,
+isu.LIVE_ADDR, isu.CREAT_DATE, isu.LGN_ID, isu.STATUS, isu.department, isl.USER_CODE
+FROM ifm_sys_user AS isu
+LEFT JOIN ifm_sys_login AS isl ON isl.lgnId = isu.LGN_ID
+WHERE 1=1 AND userId <> '1' and isu.STATUS <> '5' $condition
+ORDER BY isu.status,isu.LGN_ID desc
+LIMIT @pageNum,10
+
+
+/* sys.user.select.data.type */
+SELECT isu.userId, isu.USER_NAME, isu.ORG_ID, isu.JOB_NUM, isu.SEX, isu.DEGREE, isu.IDENTITY_CARD, isu.PHONE, isu.COMPANY_EMAIL, isu.PERSONAL_EMAIL,
+isu.LIVE_ADDR, isu.CREAT_DATE, isu.LGN_ID, isu.STATUS, isu.department, isl.USER_CODE
+FROM ifm_sys_user AS isu
+LEFT JOIN ifm_sys_login AS isl ON isl.lgnId = isu.LGN_ID
+WHERE 1=1 and isl.type = '2' AND userId <> '1' and isu.STATUS <> '5'$condition
+ORDER BY isu.status,isu.CREAT_DATE desc
+LIMIT @pageNum,10
+
+
+/* sys.user.select.data2 */
+select * from ifm_sys_login
+
+
+
+/* sys.user.count.data */
+SELECT count(1) count
+FROM ifm_sys_user AS isu
+LEFT JOIN ifm_sys_login AS isl ON isl.lgnId = isu.LGN_ID
+WHERE 1=1 AND userId <> '1'  and isu.STATUS <> '5' $condition
+
+/*sys.muen.select.data*/
+select
+t.muenId id,t.muen_name name,t.parent_muen_id pid,t1.muen_name pname,t.`status`,t.xh,t.uri,
+case when t.parent_muen_id=0 then '/static/js/ztree/css/zTreeStyle/img/diy/home.png' else '/static/js/ztree/css/zTreeStyle/img/diy/dept1.png' end as icon,
+case when t.parent_muen_id=0 then 'true' else '' end as open
+from IFM_SYS_MUEN t
+left join IFM_SYS_MUEN t1 on t1.muenId=t.PARENT_MUEN_ID
+where t.status = '0'
+order by t.PARENT_MUEN_ID,t.muenId

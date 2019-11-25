@@ -1,0 +1,266 @@
+/* 这是客户模块的SQL编写的地方 */
+
+/* customer.list.data */
+SELECT du.id, du.mobile,du.create_time, du.status, du.remark, dui.user_name, dui.zhima_score,
+dui.id_card, dui.bank_card,uo.pay_amt,du.source,
+CASE dui.user_auth WHEN null THEN '未认证' WHEN '1' THEN '活体' WHEN '2' THEN '个人信息' WHEN '3' THEN '银行卡' WHEN '4' THEN '联系人' WHEN '5' THEN '运营商'  ELSE '未知' END user_auth
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1 $condition
+ORDER BY du.create_time desc
+LIMIT @pageNum,10
+
+
+/* customer.list.data.mail.return */
+SELECT du.id, du.mobile,du.create_time, du.status, du.remark, dui.user_name, dui.zhima_score,
+dui.id_card, dui.bank_card,uo.pay_amt,du.source,xo.request_no,xo.amt,uo.user_auth as ua,
+CASE dui.user_auth WHEN null THEN '未认证' WHEN '1' THEN '活体' WHEN '2' THEN '个人信息' WHEN '3' THEN '银行卡' WHEN '4' THEN '联系人' WHEN '5' THEN '运营商'  ELSE '未知' END user_auth
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+left join xf_order_success as xo on xo.user_id = du.id
+where uo.pay_amt is not null and xo.`status` = '1' $condition
+ORDER BY du.create_time desc
+LIMIT @pageNum,10
+
+/* customer.list.data.mail.return.count */
+SELECT count(1)count
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+left join xf_order_success as xo on xo.user_id = du.id
+where uo.pay_amt is not null and xo.`status` = '1' $condition
+ORDER BY du.create_time desc
+
+/* customer.list.data.none */
+SELECT du.id, du.mobile,du.create_time, du.status, du.remark, dui.user_name, dui.zhima_score,
+dui.id_card, dui.bank_card,uo.pay_amt,du.source,
+CASE dui.user_auth WHEN null THEN '未认证' WHEN '1' THEN '活体' WHEN '2' THEN '个人信息' WHEN '3' THEN '银行卡' WHEN '4' THEN '联系人' WHEN '5' THEN '运营商'  ELSE '未知' END user_auth
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and (user_name is null or dui.user_auth = '0')  $condition
+ORDER BY du.create_time desc
+LIMIT @pageNum,10
+
+
+
+/* customer.list.data.money */
+SELECT IFNULL(sum(uo.pay_amt),0.00) as pay_amt
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1 $condition
+
+
+
+/* customer.list.data.money.source */
+SELECT IFNULL(sum(uo.pay_amt),0.00) as pay_amt
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE du.source = @source
+
+
+/* customer.list.data.none.count */
+SELECT count(1) count
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and (user_name is null or dui.user_auth = '0') $condition
+
+/*customer.collection.pay.data*/
+select ifnull(sum(amt),0.00) amt from $condition1
+where 1 =1 and  status = '1' $condition
+
+/* customer.list.data.count */
+SELECT count(1) count
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+WHERE  1 = 1 $condition
+
+/* customer.collection.list.data */
+SELECT du.id, du.mobile,du.create_time, du.status, du.remark, dui.user_name, dui.zhima_score,
+dui.id_card, dui.bank_card
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+WHERE 1=1 $condition
+ORDER BY du.create_time desc
+
+/* customer.list.data.by.id */
+SELECT du.id, du.mobile, du.create_time, dui.user_name, dui.zhima_score, dui.job,dui.id_card,
+CASE du.status WHEN '0' THEN '正常' WHEN '1' THEN '禁用' ELSE '未知' END status,
+CASE dui.sex WHEN '0' THEN '男' WHEN '1' THEN '女' ELSE '未知' END sex,
+CASE dui.user_auth WHEN '0' THEN '未认证' WHEN '1' THEN '活体' WHEN '2' THEN '个人信息' WHEN '3' THEN '银行卡' WHEN '4' THEN '联系人' WHEN '5' THEN '运营商'  ELSE '未知' END mobile_auth,
+dui.bank_card, dui.bank_open
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+WHERE du.id = @customerId
+
+/* customer.list.data.by.userId*/
+ select * from dc_user where where user_id = @userId
+
+ /* customer.list.data.by.userId*/
+ select * from dc_user_info where user_id = @userId
+
+  /* customer.list.data.by.status*/
+  select * from user_order where status in (0,2)
+
+/* customer.refund.data */
+SELECT du.id, du.mobile,du.create_time, du.status, du.remark, dui.user_name, dui.zhima_score,
+dui.id_card, dui.bank_card,uo.pay_amt,du.source,
+CASE dui.user_auth WHEN null THEN '未认证' WHEN '1' THEN '活体' WHEN '2' THEN '个人信息' WHEN '3' THEN '银行卡' WHEN '4' THEN '联系人' WHEN '5' THEN '运营商'  ELSE '未知' END user_auth
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1 $condition
+and uo.user_auth != '5'
+and uo.sys_user_id is null
+ORDER BY du.create_time desc
+
+
+/* customer.myRefund.data */
+SELECT du.id, du.mobile,du.create_time, du.status, du.remark, dui.user_name, dui.zhima_score,
+dui.id_card, dui.bank_card,uo.pay_amt,du.source,uo.user_auth refundStatus,
+CASE dui.user_auth WHEN null THEN '未认证' WHEN '1' THEN '活体' WHEN '2' THEN '个人信息' WHEN '3' THEN '银行卡' WHEN '4' THEN '联系人' WHEN '5' THEN '运营商'  ELSE '未知' END user_auth
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1 $condition
+and uo.sys_user_id = @sysUserId
+ORDER BY du.create_time desc
+LIMIT @pageNum,10
+
+/* customer.myRefund.data.count */
+SELECT count(1)count
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1 $condition
+and uo.sys_user_id = @sysUserId
+ORDER BY du.create_time desc
+
+
+/* customer.refundList.data */
+SELECT du.id, du.mobile,du.create_time, du.status, du.remark, dui.user_name, dui.zhima_score,
+dui.id_card, dui.bank_card,uo.pay_amt,du.source,uo.user_auth refundStatus,uo.refund_amt,
+CASE dui.user_auth WHEN null THEN '未认证' WHEN '1' THEN '活体' WHEN '2' THEN '个人信息' WHEN '3' THEN '银行卡' WHEN '4' THEN '联系人' WHEN '5' THEN '运营商'  ELSE '未知' END user_auth
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1 $condition
+and uo.user_auth in('1','2','3','4')
+ORDER BY du.create_time desc
+LIMIT @pageNum,10
+
+/* customer.refundList.data.count */
+SELECT count(1)count
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1 $condition
+and uo.user_auth in('1','2','3','4')
+ORDER BY du.create_time desc
+
+/* customer.statisticsList.data */
+select
+su.userId,
+su.USER_NAME,
+ifnull(three.cnt, 0) audit_new,
+ifnull(one.cnt, 0) new_pass_cnt,
+ifnull(two.cnt, 0) new_reject_cnt,
+ifnull(ifnull(one.cnt, 0)/ifnull(three.cnt, 0), 0) new_pass_rate,
+ifnull(ifnull(two.cnt, 0)/ifnull(three.cnt, 0), 0) new_reject_rate
+from ifm_sys_user su
+left join
+(SELECT
+su.userId, count(uo.id) cnt
+FROM
+user_order uo
+left join ifm_sys_user su on uo.sys_user_id= su.userId
+where uo.refund_time is not null and uo.user_auth in('1','2','3','4')
+and su.STATUS = '2'
+$time
+group by su.userId) one
+on su.userId = one.userId
+left join
+(SELECT
+su.userId,count(uo.id) cnt
+FROM
+user_order uo
+left join ifm_sys_user su on uo.sys_user_id= su.userId
+where uo.refund_time is not null and uo.user_auth = '0'
+and su.STATUS = '2'
+$time
+group by su.userId) two
+on su.userId = two.userId
+left join
+(SELECT
+su.userId, count(uo.id) cnt
+FROM
+user_order uo
+left join ifm_sys_user su on uo.sys_user_id= su.userId
+where uo.sys_user_id is not null
+and su.STATUS = '2'
+$time
+group by su.userId) three
+on su.userId = three.userId
+left join ifm_user_role sur on su.userId = sur.user_id
+left join ifm_sys_role sr on sur.ROLE_ID = sr.roleId
+where sr.ROLE_CODE in ('service')and su.STATUS = '2'
+$name
+LIMIT @pageNum,10
+
+
+/* customer.statisticsList.data.count */
+select
+count(1)count
+from ifm_sys_user su
+left join
+(SELECT
+su.userId, count(uo.id) cnt
+FROM
+user_order uo
+left join ifm_sys_user su on uo.sys_user_id= su.userId
+where uo.refund_time is not null and uo.user_auth in('1','2','3','4')
+and su.STATUS = '2'
+$time
+group by su.userId) one
+on su.userId = one.userId
+left join
+(SELECT
+su.userId,count(uo.id) cnt
+FROM
+user_order uo
+left join ifm_sys_user su on uo.sys_user_id= su.userId
+where uo.refund_time is not null and uo.user_auth = '0'
+and su.STATUS = '2'
+$time
+group by su.userId) two
+on su.userId = two.userId
+left join
+(SELECT
+su.userId, count(uo.id) cnt
+FROM
+user_order uo
+left join ifm_sys_user su on uo.sys_user_id= su.userId
+where uo.sys_user_id is not null
+and su.STATUS = '2'
+$time
+group by su.userId) three
+on su.userId = three.userId
+left join ifm_user_role sur on su.userId = sur.user_id
+left join ifm_sys_role sr on sur.ROLE_ID = sr.roleId
+where sr.ROLE_CODE in ('service')and su.STATUS = '2'
+$name

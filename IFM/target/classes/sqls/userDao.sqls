@@ -1,0 +1,25 @@
+/* 这是userOrder模块的SQL编写的地方 */
+
+/* user.order.findByPrimary */
+ select * from user_order where id = @Id
+
+ /* user.order.selectLastByUserIdAndTypeAndOuterId */
+ select   * from kq_order where
+    type = @type
+     and user_id = @userId
+     and outer_id = @outerId
+     order by id desc limit 0, 1
+
+    /* user.order.selectByUserAndCardAndAuthFrom */
+      select
+         *
+         from user_bankcard
+         where user_id =  @userId
+         and card_no =  @cardNo
+         and auth_from =  @authFrom
+
+
+    /* loan.order.byOrderId */
+ SELECT
+         *
+         FROM loan_order WHERE order_id = @orderId  order by id desc limit 1

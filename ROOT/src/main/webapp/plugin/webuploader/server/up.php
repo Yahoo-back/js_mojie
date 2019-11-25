@@ -1,0 +1,1 @@
+{"msg":"http://e.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=ecb20738377adab43dd01c45b3efd421/8d5494eef01f3a29395e61de9825bc315c607c0f.jpg","status":"success","url":"http://e.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=ecb20738377adab43dd01c45b3efd421/8d5494eef01f3a29395e61de9825bc315c607c0f.jpg"}

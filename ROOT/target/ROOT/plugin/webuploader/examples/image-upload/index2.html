@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WebUploader演示</title>
+    <link rel="stylesheet" type="text/css" href="../../css/webuploader.css" />
+</head>
+<body>
+<div>
+  <div class="up_single">选择图片</div>
+  <div class="img">
+      <input type="text" class="val" name="image"/>
+      <img src="">
+   </div>
+</div>
+<div>
+    <div class="up_single">选择图片</div>
+    <div class="img">
+        <input type="text" class="val" name="image"/>
+        <img src="">
+    </div>
+</div>
+
+<script type="text/javascript" src="./jquery.js"></script>
+<script type="text/javascript" src="../../dist/webuploader.js"></script>
+<script type="text/javascript">
+jQuery(function() {
+    var $ = jQuery,
+		$index = 0,
+    	$image,
+        uploader;
+		
+	$('.up_single').on('click',function(){ 
+		$index = $(this).index('.up_single');
+		$image = $($('.img').get($index));
+		uploader.reset();
+		 
+	});
+    uploader = WebUploader.create({
+        auto: true,
+        swf: '../../dist/Uploader.swf',
+        server: '../../server/up.php',
+        pick: {
+			id: '.up_single',
+			multiple: false
+		},
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/*'
+        }
+	});
+
+    uploader.on( 'uploadSuccess', function( file ,response) {
+			$img = $image.find('img');
+			var result = eval('(' + response._raw + ')'); 
+			if(result.status =="success"){
+				 $image.find('.val').val(result.msg);
+				 $img.attr( 'src', result.msg);   
+			}
+			else alert(result.msg);
+	});
+	
+});
+</script>
+</body>
+</html>

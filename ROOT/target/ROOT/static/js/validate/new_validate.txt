@@ -1,0 +1,53 @@
+new_validate 使用自动验证，主要针对金额，电话号码的输入验证，键盘每敲入一个键都会验证输入的值是否正确
+
+new_validate 有两个主要方法:1)init(),2)submit(form的名称)
+
+使用方法
+一、给需要验证的输入框、下拉框添加事件和规则
+对输入框自定义了:isNum="true",isPhone="true",numsize="2,0",isDate="true",isNull="true" 属性
+ 注意:
+ 1、numsize不能单独使用，必须和isnum和isphone一起使用;
+ 2、numsize 默认长度12位
+ 3、isNum="true",isPhone="true",isDate="true" 不能同时存在
+具体说明 :
+ 1、isNum="true" 代表输入框内填写的是金额 
+    a、带小数 例如132.20 isNum="true" numsize="3,2"
+    numsize="3,2"数字长度小数点前3位，小数点后2位，此时输入框的maxlength="6" 小数点前3位+小数点后二位+小数点占位符
+    maxlength="6" 不用手工写，new_validate的init方法会自动加入maxlength属性
+    <input type="text" value="132.20" isNum="true" numsize="3,2" isNull="true"/>
+    b、 整数 例如132 isNum="true" numsize="3"
+    <input type="text" value="132"  isNum="true" numsize="3" isNull="true"/>
+ 
+ 2、isDate="true" 验证输入框内的日期可是是否真确 有效格式 2012-04-12
+    <input type="text" value="2012-04-12" isDate="true" />
+ 
+ 3、isPhone="true" 代表输入框内填写的是电话号码
+    a、不带"-"的电话号码
+    <input type="text" value="12345678"  isPhone="true" numsize="8" isNull="true"/>
+ 	b、带"-"的电话号码
+ 	<input type="text" value="025-12345678"  isPhone="true" numsize="3,8" isNull="true"/>
+
+  4、select标签现在只能添加 isnull属性，对他进行是否为空验证
+  	 <select isNull="true">
+
+二、数据提交验证
+ 在提交的js方法前添加 submit(form的名称)，提交时会自动验证当前form中打上isnull属性的标签
+ 3、isNull="true"  数据提交时验证 isNull="true" 的输入框为必填
+ 
+三、js调用
+<!--
+	
+	$(function(){
+
+		init();//初始化时间
+	
+	});
+
+	function saveCollArInfo(){
+		return submit("form2");//数据验证
+		$("#grtcompensactionInput_ff").attr({action:ctx+"/grt/compensationAction_saveCompensation.action"+"?"+sessInfo,method:"post"});
+		$("#grtcompensactionInput_ff").submit();
+	}
+
+//-->
+</SCRIPT>

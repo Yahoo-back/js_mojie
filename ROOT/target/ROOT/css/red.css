@@ -1,0 +1,18 @@
+@charset "utf-8";
+.console-header{background:#ca4257;}
+.console-header .logo{background-color:#ca4257;border-right:1px solid #bd354a;}
+
+
+#header-tab li{border-right:1px solid #bd354a;}
+#header-tab li:hover{background:#d8465c;}
+#header-tab li.active{background:#bd354a;}
+
+#iframe-tab li.active a{color:#bd354a;}
+
+.left-nav .tip{border:1px solid #ca4257; color:#ca4257; border-left:none;}
+
+
+.console-header .nav li{border-left:1px solid #bd354a;}
+.console-header .nav li .b:hover,
+.console-header .nav .n a:hover,
+.console-header .nav .hover .b{background:#d8465c;}

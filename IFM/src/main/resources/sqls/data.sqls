@@ -1,0 +1,687 @@
+/* 这是数据模块的SQL编写的地方 */
+
+/* data.product.list.data */
+
+SELECT dpvl.id, dp.name product_name, dpvl.visit_time, sum(dpvl.count)count
+FROM dc_product_visit_log AS dpvl
+LEFT JOIN dc_product AS dp ON dp.id = dpvl.product_id
+WHERE 1=1 AND dpvl.type in('0','2') $condition
+group by dp.id
+LIMIT @pageNum,10
+
+/* data.product.list.source */
+SELECT dpvl.id, dp.name product_name, dpvl.visit_time, sum(dpvl.count)count
+FROM dc_product_visit_log AS dpvl
+LEFT JOIN dc_product AS dp ON dp.id = dpvl.product_id
+WHERE 1=1 AND dpvl.type in('0','2') $condition
+$condition1
+group by dp.id
+
+/* data.product.source.withhold */
+select dvl.source ,ifnull(g.pay_amt,0.00) pay
+from dc_visit_log  dvl
+left join(
+SELECT IFNULL(sum(uo.pay_amt),0.00) as pay_amt,du.source g_source
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1 $condition
+group by du.source
+) g on dvl.source = g.g_source
+where 1 =1   $condition1
+group by dvl.source
+
+/* data.product.source.user */
+select du.source,du.create_time
+from user_order uo
+left join dc_user du on du.id = uo.user_id
+where 1 =1  $condition   $condition1
+
+/* data.product.source.click */
+select du.source , du.create_time , dp.name ,count(du.source) count,dp.settle_way_cpa cpa
+from dc_product_distinct  dpd
+left join dc_user du on du.mobile = dpd.mobile
+left join dc_product dp on dpd.porduct_id = dp.id
+where 1 = 1 $condition   $condition1
+Group By dp.name
+
+/* data.product.source.cpa */
+select sl.USER_CODE ,ifnull(su.CPA,10)cpa ,ifnull(su.cpaType,1) cpaType from ifm_sys_user  su
+left join ifm_sys_login sl on su.userId = sl.lgnId
+where 1 = 1 $condition1
+
+/* data.product.source */
+SELECT DISTINCT source
+FROM dc_visit_log dl
+left join ifm_sys_login il on dl.source = il.USER_CODE
+WHERE classify = '3' and source != '' and il.openLgnId='$condition1'
+
+
+/* data.product.list.dataBy1 */
+
+SELECT dpvl.id, dp.name product_name, dpvl.visit_time, sum(dpvl.count)count
+FROM dc_product_visit_log AS dpvl
+LEFT JOIN dc_product AS dp ON dp.id = dpvl.product_id
+WHERE 1=1 AND dpvl.type in('0','2') and dp.status = 1 $condition
+group by dp.id
+LIMIT @pageNum,10
+
+/* data.product.list.dataBy2 */
+
+SELECT dpvl.id, dp.name product_name, dpvl.visit_time, sum(dpvl.count)count
+FROM dc_product_visit_log AS dpvl
+LEFT JOIN dc_product AS dp ON dp.id = dpvl.product_id
+WHERE 1=1 AND dpvl.type in('0','2') and dp.status = 0 $condition
+group by dp.id
+LIMIT @pageNum,4
+
+/* data.product.count.dataBy1 */
+select count(1) count from(
+SELECT dpvl.id, dp.name product_name, dpvl.visit_time, sum(dpvl.count)count
+FROM dc_product_visit_log AS dpvl
+LEFT JOIN dc_product AS dp ON dp.id = dpvl.product_id
+WHERE 1=1 AND dpvl.type in('0','2') and dp.status = 1 $condition
+group by dp.id ) a ;
+
+/* data.product.count.dataBy2 */
+select count(1) count from(
+SELECT dpvl.id, dp.name product_name, dpvl.visit_time, sum(dpvl.count)count
+FROM dc_product_visit_log AS dpvl
+LEFT JOIN dc_product AS dp ON dp.id = dpvl.product_id
+WHERE 1=1 AND dpvl.type in('0','2') and dp.status = 0 $condition
+group by dp.id )a ;
+
+
+
+/* SELECT dpvl.id, dp.name product_name, dpvl.visit_time, dpvl.count
+FROM dc_product_visit_log AS dpvl
+LEFT JOIN dc_product AS dp ON dp.id = dpvl.product_id
+WHERE 1=1 AND dpvl.type = '0' $condition
+ORDER BY dpvl.visit_time desc
+LIMIT @pageNum,10 */
+
+/* data.product.count.data */
+SELECT count(1) count
+FROM dc_product_visit_log AS dpvl
+LEFT JOIN dc_product AS dp ON dp.id = dpvl.product_id
+WHERE 1=1 AND dpvl.type = '0' $condition
+
+/* data.collection.product.list.data */
+SELECT dpvl.id, dp.name product_name, dpvl.visit_time, dpvl.count
+FROM dc_product_visit_log AS dpvl
+LEFT JOIN dc_product AS dp ON dp.id = dpvl.product_id
+WHERE 1=1 AND dpvl.type = '0' $condition
+ORDER BY dpvl.visit_time desc
+
+/* data.echarts.product.list.data */
+select DATE_FORMAT(a.click_date,'%Y-%m-%d %H:%i:%s') click_date,ifnull(c.count,0) count
+from (
+     $condition1
+) a
+LEFT JOIN (
+	SELECT dpvl.id, dpvl.product_id, dpvl.visit_time, dpvl.count
+	FROM dc_product_visit_log AS dpvl
+	WHERE 1=1 AND dpvl.type = '0' $condition2
+) c on a.click_date = c.visit_time
+ORDER BY a.click_date
+
+/* data.page.list.data */
+SELECT dvl.id, dvl.classify, dvl.visit_time, dvl.count
+FROM dc_visit_log AS dvl
+WHERE 1=1 AND dvl.classify IN ('0', '1', '2') $condition
+ORDER BY dvl.visit_time desc
+LIMIT @pageNum,10
+
+/* data.page.count.data */
+SELECT count(1) count
+FROM dc_visit_log AS dvl
+WHERE 1=1 AND dvl.classify IN ('0', '1', '2') $condition
+
+/* data.collection.page.list.data */
+SELECT dvl.id, dvl.classify, dvl.visit_time, dvl.count
+FROM dc_visit_log AS dvl
+WHERE 1=1 AND dvl.classify IN ('0', '1', '2') $condition
+ORDER BY dvl.visit_time desc
+
+/* data.source.list.data */
+SELECT dvl.id, dvl.classify, dvl.visit_time, dvl.count, dvl.source,IFNULL(dvl.count_uv,0)AS count_uv,dvl.uv
+FROM dc_visit_log AS dvl
+WHERE 1=1 AND dvl.classify = '3' $condition
+ORDER BY dvl.visit_time desc
+LIMIT @pageNum,10
+
+/* data.source.list.data.NoPage */
+SELECT dvl.id, dvl.classify, dvl.visit_time, dvl.count, dvl.source,IFNULL(dvl.count_uv,0)AS count_uv,dvl.uv
+FROM dc_visit_log AS dvl
+WHERE 1=1 AND dvl.classify = '3' $condition
+ORDER BY dvl.visit_time desc
+
+
+/* data.source.list.data .only */
+SELECT dvl.id, dvl.classify, dvl.visit_time, sum(dvl.count)count, dvl.source,sum(IFNULL(dvl.count_uv,0))AS count_uv,sum(dvl.uv)uv
+FROM dc_visit_log AS dvl
+WHERE 1=1 AND dvl.classify = '3' $condition
+group by dvl.source
+LIMIT @pageNum,10
+
+/* data.source.list.data.source */
+SELECT dvl.id, dvl.classify, dvl.visit_time, dvl.count, dvl.source,IFNULL(dvl.count_uv,0)AS count_uv,dvl.uv
+FROM dc_visit_log AS dvl
+left join ifm_sys_login isl on isl.USER_CODE = dvl.source
+WHERE 1=1 AND dvl.classify = '3' and isl.lgnId = @source $condition
+ORDER BY dvl.visit_time desc
+LIMIT @pageNum,10
+
+/* data.source.list.sl */
+select * from sl_qdao where source =  @source $condition
+
+/* data.source.list1.sl */
+select * from sl_qdao
+
+
+/* data.source.list.sl.all */
+select * from sl_qdao as dvl
+left join  ifm_sys_login isl on dvl.login_id = isl.lgnId
+where 1=1  $condition
+ORDER BY update_time desc
+LIMIT @pageNum,10
+
+/* data.source.list.sl.all.count */
+select  count(1) count from sl_qdao as dvl
+left join  ifm_sys_login isl on dvl.login_id = isl.lgnId
+where 1=1  $condition
+ORDER BY update_time desc
+
+
+
+/* data.source.list.data.source.page */
+SELECT count(1) count
+FROM dc_visit_log AS dvl
+left join ifm_sys_login isl on isl.USER_CODE = dvl.source
+WHERE 1=1 AND dvl.classify = '3' and isl.lgnId = @source $condition
+ORDER BY dvl.visit_time desc
+
+
+
+
+/* data.source.list.data.source.NoPage */
+SELECT dvl.id, dvl.classify, dvl.visit_time, dvl.count, dvl.source,IFNULL(dvl.count_uv,0)AS count_uv,dvl.uv
+FROM dc_visit_log AS dvl
+left join ifm_sys_login isl on isl.USER_CODE = dvl.source
+WHERE 1=1 AND dvl.classify = '3' and isl.lgnId = @source $condition
+ORDER BY dvl.visit_time desc
+
+
+/* data.source.list.data.mobile */
+select distinct du.mobile from dc_user as du where du.source = @source
+
+
+/* data.source.list.data.sum */
+SELECT sum(dvl.count)count, sum(IFNULL(dvl.count_uv,0))AS count_uv
+FROM dc_visit_log AS dvl
+WHERE 1=1 AND dvl.classify = '3' $condition
+ORDER BY dvl.visit_time desc
+LIMIT @pageNum,10
+
+
+/* data.source.count.data */
+SELECT count(1) count
+FROM dc_visit_log AS dvl
+WHERE 1=1 AND dvl.classify = '3' $condition
+
+
+/* data.source.count.data.userAuth */
+select du.mobile,du.source,dui.user_auth, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+from dc_user as du
+left join dc_user_info as dui on du.id = dui.user_id
+where du.source = @source and dui.user_auth = @userAuth and DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00.0') = @create_time
+
+
+/* data.source.count.data.sumMoney */
+select IFNULL(sum(uo.pay_amt),0)pay_amt
+from dc_user as du
+left join user_order as uo on du.id = uo.user_id
+where du.source = @source and DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00.0') = @create_time
+
+
+
+/* export.data.source.list.data */
+SELECT dvl.id, dvl.classify, dvl.visit_time, dvl.count, dvl.source,IFNULL(dvl.count_uv,0)AS count_uv
+FROM dc_visit_log AS dvl
+WHERE 1=1 AND dvl.classify = '3' $condition
+ORDER BY dvl.visit_time desc
+
+/* data.source.classify.list.data */
+SELECT DISTINCT source
+FROM dc_visit_log WHERE classify = '3' and source != ''
+
+/* data.echarts.source.list.data */
+select DATE_FORMAT(a.click_date,'%Y-%m-%d %H:%i:%s') click_date,ifnull(c.uv,0) count
+from (
+    $condition1
+) a
+LEFT JOIN (
+	SELECT dvl.id, dvl.visit_time,dvl.uv, dvl.source
+	FROM dc_visit_log AS dvl WHERE 1=1 AND classify = '3' $condition2
+) c on a.click_date = c.visit_time
+ORDER BY a.click_date
+
+/* data.echarts.page.list.data */
+select DATE_FORMAT(a.click_date,'%Y-%m-%d %H:%i:%s') click_date,ifnull(c.count,0) count
+from (
+    $condition1
+) a
+LEFT JOIN (
+	SELECT dvl.id, dvl.visit_time, dvl.count
+	FROM dc_visit_log AS dvl WHERE 1=1 $condition2
+) c on a.click_date = c.visit_time
+ORDER BY a.click_date
+
+/* data.page.classify.list.data */
+SELECT DISTINCT classify
+FROM dc_visit_log WHERE classify IN ('0', '1', '2')
+
+/* data.product.report.list.data */
+SELECT dpr.id, dpr.visit_time, dpr.visit_count, dpr.reg_count, CONCAT(format(dpr.change_rate * 100,2) , '%') change_rate,
+dpr.loan_count, dpr.settle_way, dpr.settle_state, dpr.remark, dp.name, dpr.settle_money, dp.company
+FROM dc_product_report AS dpr
+LEFT JOIN dc_product AS dp ON dp.id = dpr.product_id
+WHERE 1=1 AND dp.status <> '2' $condition
+ORDER BY dpr.visit_time desc
+LIMIT @pageNum,10
+
+/* data.product.finance.report.list.data */
+SELECT dpr.id, dpr.visit_time,dpr.settle_way, dpr.settle_state, dpr.remark, dp.name, dpr.settle_money, dp.company,dpr.serial_number,isu.user_name user_code
+FROM dc_product_report AS dpr
+LEFT JOIN dc_product AS dp ON dp.id = dpr.product_id
+LEFT JOIN ifm_sys_user AS isu ON isu.LGN_ID = dpr.user_id
+WHERE 1=1 AND dp.status <> '2' $condition
+ORDER BY dpr.visit_time desc
+LIMIT @pageNum,10
+
+/* data.product.report.data.count */
+SELECT count(1) count
+FROM dc_product_report AS dpr
+LEFT JOIN dc_product AS dp ON dp.id = dpr.product_id
+WHERE 1=1 AND dp.status <> '2' $condition
+
+/* data.collection.product.report.list.data */
+SELECT dpr.id, dpr.visit_time, dpr.visit_count, dpr.reg_count, CONCAT(format(dpr.change_rate * 100,2) , '%') change_rate,
+dpr.loan_count, dpr.settle_way, dpr.settle_state, dpr.remark, dp.name, dpr.settle_money
+FROM dc_product_report AS dpr
+LEFT JOIN dc_product AS dp ON dp.id = dpr.product_id
+WHERE 1=1 AND dp.status <> '2' $condition
+ORDER BY dpr.visit_time desc
+
+/* data.collection.finance.report.list.data */
+SELECT dpr.id, dpr.visit_time,dpr.settle_way, dpr.settle_state, dpr.remark, dp.name, dpr.settle_money, dp.company,dpr.serial_number,isu.user_name user_code
+FROM dc_product_report AS dpr
+LEFT JOIN dc_product AS dp ON dp.id = dpr.product_id
+LEFT JOIN ifm_sys_user AS isu ON isu.LGN_ID = dpr.user_id
+WHERE 1=1 AND dp.status <> '2' $condition
+ORDER BY dpr.visit_time desc,dpr.settle_state asc
+
+
+/* data.day.of.visit.list.data */
+SELECT IFNULL(SUM(dpvl.count),0) count
+FROM dc_product_visit_log AS dpvl
+WHERE dpvl.product_id = @productId AND date_format(dpvl.visit_time,'%Y-%m-%d') = date_sub(DATE_FORMAT(now(),'%Y-%m-%d'), interval 1 DAY) AND dpvl.type = '0'
+
+/* data.report.on.list.data */
+SELECT DISTINCT settle_way
+FROM dc_product_report
+WHERE 1=1
+
+
+/* data.source.register.list.count*/
+SELECT sum(dvl.count) countCount , sum(dvl.count_uv) countUvCount ,sum(dvl.uv) uvCount
+FROM dc_visit_log AS dvl
+WHERE 1=1 AND dvl.classify = '3' $condition
+ORDER BY dvl.visit_time desc
+
+
+
+/*data.source.data.Sum.data*/
+SELECT  dvl.id, dvl.classify, dvl.visit_time, IFNULL(sum(dvl.count),0) count, dvl.source,
+IFNULL(sum(dvl.count_uv),0)AS count_uv,IFNULL(sum(dvl.uv) ,0) uv,
+ifnull(sum(a.count),0) none
+,ifnull(sum(b.count),0) face,ifnull(sum(c.count),0) per,ifnull(sum(d.count),0) bank,
+ifnull(sum(e.count),0) concat,ifnull(sum(f.count),0) yun
+FROM dc_visit_log AS dvl
+left join  ifm_sys_login isl on isl.USER_CODE = dvl.source
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and (user_name is null or dui.user_auth = '0') and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) a on dvl.source = a.source  and a.create_time =  dvl.visit_time
+
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '1' and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) b on dvl.source = b.source  and b.create_time =  dvl.visit_time
+
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '2' and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) c on dvl.source = c.source  and c.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '3' and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) d on dvl.source = d.source  and d.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '4' and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) e on dvl.source = e.source  and e.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '5' and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) f on dvl.source = f.source  and f.create_time =  dvl.visit_time
+WHERE 1=1 AND dvl.classify = '3' and dvl.source = '$condition'
+and dvl.visit_time > '$condition1' and dvl.visit_time <= '$condition2'
+ORDER BY dvl.visit_time desc
+
+
+/*data.source.data.Sum1.data*/
+SELECT  dvl.id, dvl.classify, dvl.visit_time, IFNULL(sum(dvl.count),0) count, dvl.source,
+IFNULL(sum(dvl.count_uv),0)AS count_uv,IFNULL(sum(dvl.uv) ,0) uv,
+ifnull(sum(a.count),0) none
+,ifnull(sum(b.count),0) face,ifnull(sum(c.count),0) per,ifnull(sum(d.count),0) bank,
+ifnull(sum(e.count),0) concat,ifnull(sum(f.count),0) yun
+FROM dc_visit_log AS dvl
+left join  ifm_sys_login isl on isl.USER_CODE = dvl.source
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and (user_name is null or dui.user_auth = '0')
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) a on dvl.source = a.source  and a.create_time =  dvl.visit_time
+
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '1'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) b on dvl.source = b.source  and b.create_time =  dvl.visit_time
+
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '2'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) c on dvl.source = c.source  and c.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '3'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) d on dvl.source = d.source  and d.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '4'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) e on dvl.source = e.source  and e.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '5'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) f on dvl.source = f.source  and f.create_time =  dvl.visit_time
+WHERE 1=1 AND dvl.classify = '3'
+and dvl.visit_time > '$condition1' and dvl.visit_time <= '$condition2'
+ORDER BY dvl.visit_time desc
+
+/*data.source.data.Sum.list*/
+SELECT  dvl.id, dvl.classify, dvl.visit_time, IFNULL(sum(dvl.count),0) count, dvl.source,
+IFNULL(sum(dvl.count_uv),0)AS count_uv,IFNULL(sum(dvl.uv) ,0) uv,
+ifnull(sum(a.count),0) none
+,ifnull(sum(b.count),0) face,ifnull(sum(c.count),0) per,ifnull(sum(d.count),0) bank,
+ifnull(sum(e.count),0) concat,ifnull(sum(f.count),0) yun
+FROM dc_visit_log AS dvl
+left join  ifm_sys_login isl on isl.USER_CODE = dvl.source
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and (user_name is null or dui.user_auth = '0') and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) a on dvl.source = a.source  and a.create_time =  dvl.visit_time
+
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '1' and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) b on dvl.source = b.source  and b.create_time =  dvl.visit_time
+
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '2' and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) c on dvl.source = c.source  and c.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '3' and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) d on dvl.source = d.source  and d.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '4' and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) e on dvl.source = e.source  and e.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '5' and du.source= '$condition'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) f on dvl.source = f.source  and f.create_time =  dvl.visit_time
+WHERE 1=1 AND dvl.classify = '3' and dvl.source = '$condition'
+and dvl.visit_time >= DATE_FORMAT('$condition1','%Y-%m-%d %H:00:00') and dvl.visit_time < DATE_FORMAT('$condition2','%Y-%m-%d %H:00:00')
+Group By dvl.visit_time
+ORDER BY dvl.visit_time desc
+
+
+/*data.source.data.Sum1.list*/
+SELECT  dvl.id, dvl.classify, dvl.visit_time, IFNULL(sum(dvl.count),0) count, dvl.source,
+IFNULL(sum(dvl.count_uv),0)AS count_uv,IFNULL(sum(dvl.uv) ,0) uv,
+ifnull(sum(a.count),0) none
+,ifnull(sum(b.count),0) face,ifnull(sum(c.count),0) per,ifnull(sum(d.count),0) bank,
+ifnull(sum(e.count),0) concat,ifnull(sum(f.count),0) yun
+FROM dc_visit_log AS dvl
+left join  ifm_sys_login isl on isl.USER_CODE = dvl.source
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and (user_name is null or dui.user_auth = '0')
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) a on dvl.source = a.source  and a.create_time =  dvl.visit_time
+
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '1'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) b on dvl.source = b.source  and b.create_time =  dvl.visit_time
+
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '2'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) c on dvl.source = c.source  and c.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '3'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) d on dvl.source = d.source  and d.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '4'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) e on dvl.source = e.source  and e.create_time =  dvl.visit_time
+left join (
+SELECT count(1) count ,du.source, DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00') create_time
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '5'
+Group By DATE_FORMAT(du.create_time,'%Y-%m-%d %H:00:00')
+) f on dvl.source = f.source  and f.create_time =  dvl.visit_time
+WHERE 1=1 AND dvl.classify = '3'
+and dvl.visit_time >= '$condition1' and dvl.visit_time < '$condition2'
+Group By dvl.visit_time
+ORDER BY dvl.visit_time desc
+
+
+/*data.source.roor.list.data*/
+select dvl.source ,ifnull(log.count,0)  count ,ifnull(log.count_uv ,0) count_uv,ifnull(log.uv ,0) uv,ifnull(a.a_count,0) none
+,ifnull(b.b_count,0) face,ifnull(c.c_count,0) per,ifnull(d.d_count,0) bank,ifnull(e.e_count,0) concat,ifnull(f.f_count,0) yun
+,ifnull(g.pay_amt,0.00) pay
+from dc_visit_log  dvl
+left join (
+select source, id ,sum(count) count ,sum(count_uv) count_uv , sum(uv) uv
+from dc_visit_log dvl
+where classify = '3' $condition $condition2
+group by source
+) log on dvl.id = log.id
+left join (
+SELECT count(1) a_count ,du.source a_source
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and (user_name is null or dui.user_auth = '0') $condition3
+group by du.source
+) a on dvl.source = a.a_source
+
+left join (
+SELECT count(1) b_count ,du.source b_source
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '1' $condition3
+group by du.source
+) b on dvl.source = b.b_source
+
+left join (
+SELECT count(1) c_count ,du.source c_source
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '2' $condition3
+group by du.source
+) c on dvl.source = c.c_source
+
+left join (
+SELECT count(1) d_count ,du.source d_source
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '3' $condition3
+group by du.source
+) d on dvl.source = d.d_source
+
+left join (
+SELECT count(1) e_count ,du.source e_source
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '4' $condition3
+group by du.source
+) e on dvl.source = e.e_source
+
+left join (
+SELECT count(1) f_count ,du.source f_source
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+left join (select * from ifm_sys_login ) as a on a.USER_CODE = du.source
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1  and  dui.user_auth = '5' $condition3
+group by du.source
+) f on dvl.source = f.f_source
+
+left join(
+SELECT IFNULL(sum(uo.pay_amt),0.00) as pay_amt,du.source g_source
+FROM dc_user AS du
+LEFT JOIN dc_user_info AS dui ON dui.user_id = du.id
+LEFT JOIN user_order AS uo on uo.user_id = du.id
+WHERE 1=1 $condition3
+group by du.source
+) g on dvl.source = g.g_source
+where 1 =1  $condition2
+group by dvl.source
+LIMIT @pageNum,10
+
+/*data.source.roor.list.loan*/
+select count(1)count from dc_user du
+-- left join user_order uo on uo.user_id = du.id
+LEFT JOIN dc_user_info dui on dui.user_id = du.id
+LEFT JOIN xf_order_success xo on xo.user_id = du.id
+where du.source = '$condition' and xo.amt = '299' and xo.`status` = 1
+ and dui.user_auth = 5 and DATE_FORMAT(du.create_time,'%Y-%m-%d') = DATE_FORMAT(xo.pay_date,'%Y-%m-%d')
+ $condition2   $condition3

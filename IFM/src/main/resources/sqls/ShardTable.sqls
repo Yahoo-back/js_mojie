@@ -1,0 +1,69 @@
+/* 这是分表的SQL编写的地方 */
+
+/* shardTable.countTable */
+SELECT COUNT(1) count FROM information_schema.TABLES WHERE table_name = @tableName
+
+/* shardTable.createTable.xfCallbackLog */
+CREATE TABLE $tableName (
+`id` INT(11) NOT NULL AUTO_INCREMENT,
+`user_id` INT(11) NULL DEFAULT NULL,
+`type` CHAR(1) NULL DEFAULT NULL COMMENT '0: 绑卡请求, 1: 绑卡, 2: 超时, 3: 扣款, 4: 扣款回调 5: 解绑，6:代付回调',
+`create_time` DATETIME NULL DEFAULT NULL,
+`content` VARCHAR(5000) NULL DEFAULT NULL,
+PRIMARY KEY (`id`)
+)
+COMMENT='讯付回调日志'
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+ROW_FORMAT=DYNAMIC;
+
+/* shardTable.saveShard.xfCallbackLog */
+insert into $tableName (user_id, type,
+create_time, content)
+values (@userId, @type,
+@createTime, @content);
+
+/* shardTable.createTable.xfOrder */
+CREATE TABLE $tableName (
+`id` INT(11) NOT NULL AUTO_INCREMENT,
+`user_id` INT(11) UNSIGNED NULL DEFAULT NULL,
+`type` VARCHAR(255) NULL DEFAULT NULL COMMENT '0: 续期, 1: 还款',
+`outer_id` INT(11) NULL DEFAULT NULL COMMENT 'order_delay标id或user_order标id',
+`request_no` VARCHAR(155) NULL DEFAULT NULL COMMENT '唯一请求号',
+`user_ip` VARCHAR(255) NULL DEFAULT NULL COMMENT '客户ip',
+`amt` DOUBLE(10,2) NULL DEFAULT NULL COMMENT '交易金额, 以元计算, 保留两位小数',
+`protocol_no` VARCHAR(255) NULL DEFAULT NULL COMMENT '讯付流水号',
+`create_time` DATETIME NULL DEFAULT NULL COMMENT '创建时间',
+`status` VARCHAR(255) NULL DEFAULT NULL COMMENT '0: 支付中, 1: 成功, 2: 失败, 3: 异常',
+`pay_date` DATETIME NULL DEFAULT NULL COMMENT '支付时间',
+`fuion_order_no` VARCHAR(50) NULL DEFAULT NULL,
+`fail_reason` VARCHAR(1000) NULL DEFAULT NULL COMMENT '失败原因',
+PRIMARY KEY (`id`),
+UNIQUE INDEX `request_no_2` (`request_no`) USING BTREE,
+INDEX `user_id` (`user_id`) USING BTREE,
+INDEX `request_no` (`request_no`) USING BTREE
+)
+COMMENT='创捷订单表'
+COLLATE='utf8mb4_general_ci'
+ENGINE=InnoDB
+ROW_FORMAT=DYNAMIC;
+
+/* shardTable.saveShard.xfOrder */
+insert into $tableName (user_id, type,
+outer_id, request_no, user_ip,
+amt, protocol_no, create_time,
+status, pay_date,
+fail_reason)
+values (@userId, @type,
+@outerId, @requestNo, @userIp,
+@amt, @protocolNo, @createTime,
+@status, @payDate,
+@failReason)
+
+/* shardTable.listShardSelective.xfOrder */
+select id, user_id, type,
+outer_id, request_no, user_ip,
+amt, protocol_no, create_time,
+status, fuion_order_no, pay_date,
+fail_reason from $tableName
+where type = @type and user_id = @userId and outer_id = @outerId

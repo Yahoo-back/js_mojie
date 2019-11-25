@@ -1,0 +1,37 @@
+/* 这里是业务配置sql模块 */
+
+/* config.spread.list.data */
+SELECT dc.id, dc.name, dc.associate_type, dc.associate_id, dc.pic_path, dc.position, dc.url, dc.start_time, dc.end_time, dc.sort, dc.status, dc.remark
+FROM dc_config AS dc
+WHERE 1=1 AND dc.status IN ('0', '1') $condition
+ORDER BY dc.sort asc
+LIMIT @pageNum,10
+
+/* config.spread.list.data.count */
+SELECT count(1) count
+FROM dc_config AS dc
+WHERE 1=1 AND dc.status IN ('0', '1') $condition
+
+/* export.config.spread.list.data */
+SELECT dc.id, dc.name, dc.associate_type, dc.associate_id, dc.pic_path, dc.position, dc.url, dc.start_time, dc.end_time, dc.sort, dc.status, dc.remark
+FROM dc_config AS dc
+WHERE 1=1 AND dc.status IN ('0', '1') $condition
+ORDER BY dc.sort asc
+
+/* config.dict.list.data */
+SELECT dd.id, dd.data_type, dd.item_key, dd.item_value, dd.xh, dd.is_use, dd.out_data_from, dd.parent_id, dd.dict_desc
+FROM dc_dict AS dd
+WHERE 1=1 AND dd.data_type = @dataType AND dd.is_use IN ('0', '1') $condition
+ORDER BY dd.xh asc
+LIMIT @pageNum,10
+
+/* config.dict.list.data.count */
+SELECT count(1) count
+FROM dc_dict AS dd
+WHERE 1=1 AND dd.data_type = @dataType AND dd.is_use IN ('0', '1') $condition
+
+/* export.config.dict.list.data */
+SELECT dd.id, dd.data_type, dd.item_key, dd.item_value, dd.xh, dd.is_use, dd.out_data_from, dd.parent_id, dd.dict_desc
+FROM dc_dict AS dd
+WHERE 1=1 AND dd.data_type = @dataType AND dd.is_use IN ('0', '1') $condition
+ORDER BY dd.xh asc

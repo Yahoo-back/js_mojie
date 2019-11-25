@@ -1,0 +1,66 @@
+.infoWindowTitleCls{
+    font-size: 14;
+    color: red;
+    font-style: normal;
+    font-weight: bold;
+    text-align: center;
+}
+
+.userInfoWindowCls{
+
+}
+
+
+.custInfoWindowCls{
+
+}
+
+.routePathInfoWindowCls{
+
+}
+
+.userInfoWindowPhotoCls{
+    
+    float: left;
+    height: 100px;
+    width: 70px;
+    margin: 9;
+}
+.userInfoWindowInfomationCls{
+    margin: 2px;
+    width: 300px;
+    float: left;
+}
+
+.clearFloat{
+    clear:both;
+}
+.div_line{
+
+}
+.div_line div{
+    display:inline;
+}
+.info-title{
+    font-size: 14;
+    color: red;
+    font-style: normal;
+    font-weight: bold;
+}
+#searchid{
+    width:120px;
+    margin-left:20px;
+    margin-right:20px;
+}
+
+
+
+
+
+/*-----------
+
+.BMap_pop .BMap_top {
+    border-top: 1px solid #ababab;
+    background-color: none;
+}
+------------*/
